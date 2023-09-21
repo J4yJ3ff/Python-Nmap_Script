@@ -1,30 +1,28 @@
-import nmap;
+import nmap
 
+def banner_grabbing(target_ip, target_ports):
+    # Create a new Nmap PortScanner object
+    nm = nmap.PortScanner()
 
-scanner = nmap.PortScanner()
+    # Perform a simple banner grabbing scan on the specified ports
+    for port in target_ports:
+        nm.scan(target_ip, str(port), arguments='-sV')
 
+    # Extract and print banner information
+    for host in nm.all_hosts():
+        for proto in nm[host].all_protocols():
+            if proto == 'tcp':
+                print(f"Banner information for {host}:")
 
-print("Toxic Python-Nmap Script software version 0.1")
-print("/-.-\/-.-\/-.-\/-.-\/-.-\/-.-\/-.-\/-.-\/-.-\/-.-\/-.-\/-.-\/-.-\/-.-\/-.-\/-.-\/-.-")
+                for port, port_info in nm[host][proto].items():
+                    if 'product' in port_info:
+                        print(f"  Port {port}/{proto}:")
+                        print(f"    Service: {port_info['name']} ({port_info['product']})")
+                        print(f"    Version: {port_info['version']}")
 
+if __name__ == "__main__":
+    target_ip = "195.201.179.80"  # Replace with the target IP address
+    target_ports = [80, 443, 22]  # Specify the target ports for banner grabbing
 
-url = input("Enter IP to scan:")
-print("You have entered " + url + " " + "as the scan IP")
+    banner_grabbing(target_ip, target_ports)
 
-
-resp = int("""" Please enter the scan type \n
-            1. Syn Ack
-            2. UDP
-            3. Comprehensive scan
-            4. 
-            """")
-print("You've selected option: ", resp);
-
- if resp == "1":
-    
-
-port = input("Enter the port to scan:")
-
-report = scanner.scan(url, port)
-
-print(report)
